@@ -6,6 +6,8 @@ import (
   "net"
   "os"
   "strings"
+
+  "./comms"
 )
 
 func main() {
@@ -22,7 +24,9 @@ func main() {
     return
   }
 
-  go handleServerComms(l)
+  MAP := comms.GetComms()
+
+  go HandleServerComms(l)
 
   for {
     c, err := l.Accept()
@@ -30,11 +34,11 @@ func main() {
       fmt.Println(err)
       return
     }
-    go handleConn(c)
+    go HandleConn(MAP, c)
   }
 }
 
-func handleServerComms(l net.Listener) {
+func HandleServerComms(l net.Listener) {
   defer os.Exit(0)
   defer l.Close()
   for {
@@ -50,7 +54,7 @@ func handleServerComms(l net.Listener) {
   } 
 }
 
-func handleConn(c net.Conn) {
+func HandleConn(MAP []comms.Comm, c net.Conn) {
   defer fmt.Println("closing connection with ", c.RemoteAddr().String())
   fmt.Println("creating connection with ", c.RemoteAddr().String())
   for {
@@ -63,6 +67,9 @@ func handleConn(c net.Conn) {
     switch {
       case msg == "quit":
         return 
+      default:
+        res := comms.HandleComm(MAP, msg)
+        c.Write([]byte(res))
     }
   }
 }
