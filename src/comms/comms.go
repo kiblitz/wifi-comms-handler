@@ -28,18 +28,19 @@ func GetComms() []Comm {
   return comms
 }
 
-func HandleComm(comms []Comm, comm string) string {
+func HandleComm(pre string, comms []Comm, comm string) string {
   split := strings.Split(comm, " ")
   out := GetOut(comms, split[0])
   if out == "" {
-    return fmt.Sprintf(split[0], "command not found")
+    return fmt.Sprintln(split[0], "command not found")
   }
   execStr := GetExec(out, split[1:])
   execLst := strings.Split(execStr, " ")
+  fmt.Println(pre, execLst[0], execLst[1:])
   cmd := exec.Command(execLst[0], execLst[1:]...)
-  stdout, err := cmd.Output()
+  stdout, err := cmd.CombinedOutput()
   if err != nil {
-    fmt.Println(err)
+    fmt.Println(pre, err)
   }
   return string(stdout)
 }

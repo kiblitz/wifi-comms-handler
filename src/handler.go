@@ -55,12 +55,13 @@ func HandleServerComms(l net.Listener) {
 }
 
 func HandleConn(MAP []comms.Comm, c net.Conn) {
-  defer fmt.Println("closing connection with ", c.RemoteAddr().String())
-  fmt.Println("creating connection with ", c.RemoteAddr().String())
+  addr := "[" + c.RemoteAddr().String() + "]"
+  defer fmt.Println("closing connection with ", addr)
+  fmt.Println("creating connection with ", addr)
   for {
     data, err := bufio.NewReader(c).ReadString('\n')
     if err != nil {
-      fmt.Println(err)
+      fmt.Println(addr, err)
       return
     }
     msg := strings.TrimSpace(data)
@@ -68,8 +69,9 @@ func HandleConn(MAP []comms.Comm, c net.Conn) {
       case msg == "quit":
         return 
       default:
-        res := comms.HandleComm(MAP, msg)
-        c.Write([]byte(res))
+        c.Write([]byte("starting task\n"))
+        res := comms.HandleComm(addr, MAP, msg)
+        c.Write([]byte(res + "finished task\n"))
     }
   }
 }
