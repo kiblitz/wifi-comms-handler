@@ -15,30 +15,54 @@ go run src/handler.go PORT
 ## Examples
 ### Scanner
 #### json
-<p float="left">
-  <img src="https://github.com/thisistrivial/thisistrivial/blob/master/.assets/wifi-comms-handler/json.png" width="50%">
-</p>
+```
+[
+  {
+    "in": "scan",
+    "out": "/home/gelos/.scripts/scanner.sh %s"
+  }
+]
+```
 
 `scan` command maps to running a bash script `scanner.sh` carrying over 1 string arg `%s`
 
 #### bash script
-<p float="left">
-  <img src="https://github.com/thisistrivial/thisistrivial/blob/master/.assets/wifi-comms-handler/bash.png" width="65%">
-</p>
+```
+#!/bin/bash
+
+if [ "$#" -eq 1 ]
+then
+  scanimage --device escl:http://10.0.0.249:80 --format=png > ~/Downloads/$1.png
+else
+  echo "wrong number of arguments supplied"
+fi
+```
 
 bash script runs scanner and outputs to file in `~/Documents` with arg name
 
 #### client source
-<p float="left">
-  <img src="https://github.com/thisistrivial/thisistrivial/blob/master/.assets/wifi-comms-handler/client-src.png" width="50%">
-</p>
+```
+import socket
+import sys
+# Create a TCP/IP socket
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+server_address = ('localhost', 2222)
+print(sys.stderr, 'connecting to %s port %s' % server_address)
+socket.connect(server_address)
+
+socket.sendall(b'scan output-file\n')
+
+while True:
+  print(sock.recv(128))
+```
 
 client source code run after server start with name `output-file` (line 11)
 
 #### results
 <p float="left">
-  <img src="https://github.com/thisistrivial/thisistrivial/blob/master/res/wifi-comms-handler/handler-out.png" width="70%">
-  <img src="https://github.com/thisistrivial/thisistrivial/blob/master/res/wifi-comms-handler/res.png" width="55%">
+  <img src="https://github.com/thisistrivial/thisistrivial/blob/master/.assets/wifi-comms-handler/handler-out.png" width="70%">
+  <img src="https://github.com/thisistrivial/thisistrivial/blob/master/.assets/wifi-comms-handler/res.png" width="55%">
 </p>
 
 scanned image saved to `~/Downloads` folder
