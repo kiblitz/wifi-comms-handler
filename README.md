@@ -60,9 +60,14 @@ while True:
 client source code run after server start with name `output-file` (line 11)
 
 #### results
-<p float="left">
-  <img src="https://github.com/thisistrivial/thisistrivial/blob/master/.assets/wifi-comms-handler/handler-out.png" width="70%">
-  <img src="https://github.com/thisistrivial/thisistrivial/blob/master/.assets/wifi-comms-handler/res.png" width="55%">
-</p>
+```
+$ go run handler.go 2222
+creating connection with  [127.0.0.1:54468]
+[127.0.0.1:54468] /home/gelos/.scripts/scanner.sh [output-file]
+```
+```
+$ ls | grep output-file
+output-file.png
+```
 
 scanned image saved to `~/Downloads` folder
